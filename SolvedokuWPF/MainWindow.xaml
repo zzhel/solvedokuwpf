@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SolvedokuWPF"
         mc:Ignorable="d"
-        Title="Solvedoku" Height="330" Width="280" VerticalAlignment="Top" HorizontalAlignment="Left" ResizeMode="CanMinimize" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Disabled" KeyDown="Window_KeyDown">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+        Title="Solvedoku" Height="330" Width="280" VerticalAlignment="Top" ResizeMode="CanMinimize" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Disabled" KeyDown="Window_KeyDown">
+    <StackPanel VerticalAlignment="Top">
         <Grid x:Name="SudokuGrid" ShowGridLines="True" VerticalAlignment="Top" Margin="5,5,5,5" Width="250" Height="250"/>
-        <Button x:Name="button" Content="Solve" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Height="30" Margin="0,0,5,5" Click="SolveClick" Cursor="Hand"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal">
+            <Button x:Name="button" Content="Solve" Width="74" HorizontalAlignment="Right" VerticalAlignment="Top" Height="30" Margin="0,0,5,5" Click="SolveClick" Cursor="Hand"/>
+            <Button x:Name="buttonClear" Content="Clear" Width="74" Height="30" VerticalAlignment="Top" Click="ClearClick" Cursor="Hand"/>
+        </StackPanel>
     </StackPanel>
 </Window>

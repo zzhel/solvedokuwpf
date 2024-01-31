@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace SolvedokuWPF
 {
@@ -110,6 +111,27 @@ namespace SolvedokuWPF
             ovrwCell = tag;
         }
         
+        public void ClearClick(object sender, RoutedEventArgs e)
+        {
+            for (int x = 0; x < 9; ++x)
+            {
+                for (int y = 0; y < 9; ++y)
+                {
+                    SetCellToValue(x, y, 0);
+                }
+            }
+        }
+        
+        public void SetCellToValue(int x, int y, int value)
+        {
+            table[x, y] = value;
+            this.Dispatcher.Invoke(() =>
+            {
+                if (SudokuGrid.Children.Cast<UIElement>().First(pred => Grid.GetRow(pred) == x && Grid.GetColumn(pred) == y) is Button xybutton)
+                    xybutton.Content = $"{value}";
+            });
+        }
+
         public void SolveClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button button))
@@ -158,15 +180,7 @@ namespace SolvedokuWPF
 
                             if (possibleNumbers.Count == 1)
                             {
-                                table[x, y] = possibleNumbers.ElementAt(0);
-                                this.Dispatcher.Invoke(() =>
-                                {
-                                    if (SudokuGrid.Children.Cast<UIElement>().First(pred => Grid.GetRow(pred) == x && Grid.GetColumn(pred) == y) is Button xybutton)
-                                    {
-                                        xybutton.Content = $"{possibleNumbers.ElementAt(0)}";
-                                    }
-                                });
-
+                                SetCellToValue(x, y, possibleNumbers.ElementAt(0));
                                 Thread.Sleep(50);
                                 //PrintTable(ref table);
                                 //Console.WriteLine($"Found number {possibleNumbers.ElementAt(0)}; X {x + 1} Y {y + 1}");
@@ -177,6 +191,16 @@ namespace SolvedokuWPF
                     if (done)
                         break;
 
+                    if (timer.ElapsedMilliseconds > 10000)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show("The program took more than 10 seconds while attemting to solve the puzzle.", "Could not solve.");
+                            button.Content = "Solve";
+                            button.IsEnabled = true;
+                        });
+                        return;
+                    }
                     //Thread.Sleep(500);
                 }
 
@@ -236,10 +260,7 @@ namespace SolvedokuWPF
                 return;
 
             var value = e.Key - Key.D0;
-            table[tagCopy.Item1, tagCopy.Item2] = value;
-            if (SudokuGrid.Children.Cast<UIElement>().First(pred => Grid.GetRow(pred) == tagCopy.Item1 && Grid.GetColumn(pred) == tagCopy.Item2) is Button xybutton)
-                xybutton.Content = $"{value}";
-
+            SetCellToValue(tagCopy.Item1, tagCopy.Item2, value);
             tagCopy = null;
         }
     }
